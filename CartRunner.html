@@ -2472,6 +2472,30 @@
             if (sidebar) {
                 sidebar.style.background = `rgba(10, 10, 15, ${alpha})`;
             }
+
+            // Update volume sliders
+            const volumePanels = document.querySelectorAll('.volume-panel');
+            volumePanels.forEach(panel => {
+                panel.style.background = `rgba(10, 10, 15, ${alpha})`;
+            });
+
+            // Update top buttons
+            const topControls = document.querySelector('.top-controls');
+            if (topControls) {
+                topControls.style.opacity = alpha;
+            }
+
+            // Update controller panel
+            const controllerPanel = document.querySelector('.controller-panel');
+            if (controllerPanel) {
+                controllerPanel.style.opacity = alpha;
+            }
+
+            // Update console panel
+            const consolePanel = document.querySelector('.console-panel');
+            if (consolePanel) {
+                consolePanel.style.background = `rgba(10, 10, 15, ${alpha})`;
+            }
         }
 
         const canvas = document.getElementById('gameCanvas');
