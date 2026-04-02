@@ -1,0 +1,7 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/*"
+  to = "/CartRunner.html"
+  status = 200

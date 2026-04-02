@@ -1,0 +1,16 @@
+{
+  "sound": {
+    "isMuted": false,
+    "lastVolumeBeforeMute": 100
+  },
+  "state": {
+    "gold": 644,
+    "nitroLevel": 1,
+    "shoesLevel": 0,
+    "bestSpins": 18,
+    "bestDist": 0,
+    "objectives": [
+      "spin_r_3"
+    ]
+  }
+}
