@@ -1170,20 +1170,9 @@
 
         /* MOBILE OPTIMIZATION - v1.6 - CLEAN REWRITE */
         @media (max-width: 768px), (max-height: 500px) {
-            /* Game canvas - force landscape dimensions on mobile */
+            /* Game canvas - keep native */
             #gameCanvas {
                 transform-origin: center center !important;
-            }
-
-            /* When in portrait mode on mobile, rotate entire body to landscape */
-            @media (orientation: portrait) {
-                body {
-                    transform: rotate(90deg) !important;
-                    transform-origin: center center !important;
-                    width: 100vh !important;
-                    height: 100vw !important;
-                    overflow: hidden !important;
-                }
             }
 
             /* Sidebar left - 50% */
@@ -1349,8 +1338,7 @@
         z-index: 10000;
         font-family: Arial Black, sans-serif;
     ">
-        <!-- Landscape mode: show play button -->
-        <div id="landscapeContent" style="display: none; text-align: center;">
+        <div style="text-align: center;">
             <h1 style="
                 color: #FFD700;
                 font-size: 48px;
@@ -1359,55 +1347,29 @@
                 letter-spacing: 5px;
             ">CART RUNNER</h1>
             <p style="color: #888; font-size: 14px; margin: 0 0 40px 0;">v1.6 - The Mobile Blitz</p>
-            
-            <button id="playBtn" onclick="startGame()" style="
-                background: linear-gradient(135deg, #FFD700, #FFA500);
-                border: none;
-                padding: 20px 60px;
-                font-size: 28px;
-                font-weight: 900;
-                color: #1a1a2e;
-                border-radius: 50px;
-                cursor: pointer;
-                text-transform: uppercase;
-                letter-spacing: 3px;
-                box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
-                transition: transform 0.2s, box-shadow 0.2s;
-            ">PLAY GAME</button>
-            
-            <p style="
-                color: #666;
-                font-size: 12px;
-                margin-top: 15px;
-                font-family: Arial, sans-serif;
-            ">(fullscreen)</p>
         </div>
-
-        <!-- Portrait mode: show rotate message -->
-        <div id="portraitContent" style="display: none; text-align: center;">
-            <div style="font-size: 80px; margin-bottom: 20px;">📱➡️🔄</div>
-            <h2 style="
-                color: #FFD700;
-                font-size: 24px;
-                margin: 0 0 10px 0;
-                text-shadow: 0 0 20px rgba(255, 215, 0, 0.5), 3px 3px 0 #000;
-            ">ROTATE YOUR PHONE</h2>
-            <p style="color: #888; font-size: 14px; margin: 0 0 30px 0; font-family: Arial, sans-serif;">This game is designed for landscape mode</p>
-            
-            <button id="playPortraitBtn" onclick="startGamePortrait()" style="
-                background: rgba(255,255,255,0.1);
-                border: 2px solid #FFD700;
-                color: #FFD700;
-                padding: 12px 30px;
-                font-size: 14px;
-                font-weight: 700;
-                border-radius: 30px;
-                cursor: pointer;
-                text-transform: uppercase;
-                letter-spacing: 2px;
-                font-family: Arial, sans-serif;
-            ">Play Anyway (Portrait)</button>
-        </div>
+        
+        <button id="playBtn" onclick="startGame()" style="
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border: none;
+            padding: 20px 60px;
+            font-size: 28px;
+            font-weight: 900;
+            color: #1a1a2e;
+            border-radius: 50px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        ">PLAY GAME</button>
+        
+        <p style="
+            color: #666;
+            font-size: 12px;
+            margin-top: 15px;
+            font-family: Arial, sans-serif;
+        ">(fullscreen)</p>
     </div>
 
     <canvas id="gameCanvas"></canvas>
@@ -2259,30 +2221,6 @@
             }
         }
 
-        function checkOrientation() {
-            const isMobile = window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            if (!isMobile) {
-                // Desktop - always show play button
-                document.getElementById('landscapeContent').style.display = 'block';
-                document.getElementById('portraitContent').style.display = 'none';
-                return;
-            }
-            
-            const isLandscape = window.innerWidth > window.innerHeight;
-            if (isLandscape) {
-                document.getElementById('landscapeContent').style.display = 'block';
-                document.getElementById('portraitContent').style.display = 'none';
-            } else {
-                document.getElementById('landscapeContent').style.display = 'none';
-                document.getElementById('portraitContent').style.display = 'block';
-            }
-        }
-
-        // Check orientation on load and on change
-        checkOrientation();
-        window.addEventListener('orientationchange', () => setTimeout(checkOrientation, 100));
-        window.addEventListener('resize', checkOrientation);
-
         function startGame() {
             const startMenu = document.getElementById('startMenu');
             if (startMenu) {
@@ -2294,31 +2232,15 @@
             if (isMobile) {
                 const elem = document.documentElement;
                 if (elem.requestFullscreen) {
-                    elem.requestFullscreen().then(() => {
-                        // Try to lock orientation to landscape
-                        if (screen.orientation && screen.orientation.lock) {
-                            screen.orientation.lock('landscape').catch(() => {});
-                        }
-                        setTimeout(resizeCanvas, 500);
-                    }).catch(() => {});
+                    elem.requestFullscreen().catch(() => {});
                 } else if (elem.webkitRequestFullscreen) {
                     elem.webkitRequestFullscreen();
-                    if (screen.orientation && screen.orientation.lock) {
-                        screen.orientation.lock('landscape').catch(() => {});
-                    }
-                    setTimeout(resizeCanvas, 500);
                 }
-                // Force resize canvas after fullscreen
-                setTimeout(resizeCanvas, 500);
+                setTimeout(resizeCanvas, 300);
             }
             
             initAudio();
             logToConsole('GAME STARTED - GOOD LUCK!', 'important');
-        }
-
-        function startGamePortrait() {
-            // Play in portrait mode without fullscreen
-            startGame();
         }
 
         function toggleFullscreen() {
