@@ -1170,9 +1170,19 @@
 
         /* MOBILE OPTIMIZATION - v1.6 - CLEAN REWRITE */
         @media (max-width: 768px), (max-height: 500px) {
-            /* Game canvas - keep native, use transform to fit */
+            /* Game canvas - force landscape dimensions on mobile */
             #gameCanvas {
                 transform-origin: center center !important;
+            }
+
+            /* When in portrait mode on mobile, rotate canvas to landscape */
+            @media (orientation: portrait) {
+                #gameCanvas {
+                    transform: rotate(90deg) scale(calc(100vw / 100vh)) !important;
+                    transform-origin: center center !important;
+                    width: 100vh !important;
+                    height: 100vw !important;
+                }
             }
 
             /* Sidebar left - 50% */
@@ -2609,8 +2619,16 @@
 
         function resizeCanvas() {
             const oldGroundY = canvas.height / 2;
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            // On mobile, always use landscape dimensions regardless of orientation
+            const isMobile = window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (isMobile && window.innerWidth < window.innerHeight) {
+                // Portrait mode - swap dimensions for landscape feel
+                canvas.width = window.innerHeight;
+                canvas.height = window.innerWidth;
+            } else {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
             const newGroundY = canvas.height / 2;
             const groundDiff = newGroundY - oldGroundY;
 
