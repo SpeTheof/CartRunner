@@ -1175,13 +1175,14 @@
                 transform-origin: center center !important;
             }
 
-            /* When in portrait mode on mobile, rotate canvas to landscape */
+            /* When in portrait mode on mobile, rotate entire body to landscape */
             @media (orientation: portrait) {
-                #gameCanvas {
-                    transform: rotate(90deg) scale(calc(100vw / 100vh)) !important;
+                body {
+                    transform: rotate(90deg) !important;
                     transform-origin: center center !important;
                     width: 100vh !important;
                     height: 100vw !important;
+                    overflow: hidden !important;
                 }
             }
 
@@ -2294,14 +2295,21 @@
                 const elem = document.documentElement;
                 if (elem.requestFullscreen) {
                     elem.requestFullscreen().then(() => {
-                        setTimeout(resizeCanvas, 300);
+                        // Try to lock orientation to landscape
+                        if (screen.orientation && screen.orientation.lock) {
+                            screen.orientation.lock('landscape').catch(() => {});
+                        }
+                        setTimeout(resizeCanvas, 500);
                     }).catch(() => {});
                 } else if (elem.webkitRequestFullscreen) {
                     elem.webkitRequestFullscreen();
-                    setTimeout(resizeCanvas, 300);
+                    if (screen.orientation && screen.orientation.lock) {
+                        screen.orientation.lock('landscape').catch(() => {});
+                    }
+                    setTimeout(resizeCanvas, 500);
                 }
                 // Force resize canvas after fullscreen
-                setTimeout(resizeCanvas, 300);
+                setTimeout(resizeCanvas, 500);
             }
             
             initAudio();
