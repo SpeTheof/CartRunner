@@ -1170,32 +1170,9 @@
 
         /* MOBILE OPTIMIZATION - v1.6 - CLEAN REWRITE */
         @media (max-width: 768px), (max-height: 500px) {
-            /* Game canvas - rotate on portrait to force landscape */
+            /* Game canvas - keep native dimensions */
             #gameCanvas {
                 transform-origin: center center !important;
-            }
-
-            /* Rotate entire game when in portrait mode */
-            @media (orientation: portrait) {
-                #gameCanvas {
-                    transform: rotate(90deg) !important;
-                    width: 100vh !important;
-                    height: 100vw !important;
-                }
-
-                /* Also rotate all UI elements */
-                .ui-panel,
-                .controller-panel,
-                .top-controls,
-                .volume-panel,
-                .console-panel,
-                .hotkey-panel,
-                .tech-panel,
-                #MasterVolumeSection,
-                #UITransparencySection,
-                #heightWarning {
-                    transform: rotate(90deg) !important;
-                }
             }
 
             /* Sidebar left - 50% */
@@ -2567,26 +2544,13 @@
         }
 
         // Set initial canvas size
-        canvas.width = window.innerWidth - 20;
-        canvas.height = window.innerHeight - 20;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
         function resizeCanvas() {
             const oldGroundY = canvas.height / 2;
-            // On mobile, always force landscape dimensions regardless of device orientation
-            const isMobile = window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            if (isMobile) {
-                if (window.innerWidth < window.innerHeight) {
-                    // Device is in portrait - swap dimensions for landscape rendering
-                    canvas.width = window.innerHeight;
-                    canvas.height = window.innerWidth;
-                } else {
-                    canvas.width = window.innerWidth;
-                    canvas.height = window.innerHeight;
-                }
-            } else {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-            }
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
             const newGroundY = canvas.height / 2;
             const groundDiff = newGroundY - oldGroundY;
 
