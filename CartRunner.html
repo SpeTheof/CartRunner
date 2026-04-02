@@ -1170,11 +1170,9 @@
 
         /* MOBILE OPTIMIZATION - v1.6 - CLEAN REWRITE */
         @media (max-width: 768px), (max-height: 500px) {
-            /* Game canvas - fill entire screen, no black bars */
+            /* Game canvas - keep native, use transform to fit */
             #gameCanvas {
-                width: 100vw !important;
-                height: 100vh !important;
-                object-fit: cover !important;
+                transform-origin: center center !important;
             }
 
             /* Sidebar left - 50% */
@@ -2238,6 +2236,8 @@
                 } else if (elem.webkitRequestFullscreen) {
                     elem.webkitRequestFullscreen();
                 }
+                // Force resize canvas after fullscreen
+                setTimeout(resizeCanvas, 300);
             }
             
             initAudio();
@@ -2248,9 +2248,12 @@
             if (!document.fullscreenElement && !document.webkitFullscreenElement) {
                 const elem = document.documentElement;
                 if (elem.requestFullscreen) {
-                    elem.requestFullscreen();
+                    elem.requestFullscreen().then(() => {
+                        setTimeout(resizeCanvas, 300);
+                    }).catch(() => {});
                 } else if (elem.webkitRequestFullscreen) {
                     elem.webkitRequestFullscreen();
+                    setTimeout(resizeCanvas, 300);
                 }
                 logToConsole('FULLSCREEN ACTIVATED', 'success');
             } else {
@@ -2259,12 +2262,24 @@
                 } else if (document.webkitExitFullscreen) {
                     document.webkitExitFullscreen();
                 }
+                setTimeout(resizeCanvas, 300);
                 logToConsole('FULLSCREEN EXITED', 'info');
             }
         }
 
-        document.addEventListener('fullscreenchange', updateFullscreenBtn);
-        document.addEventListener('webkitfullscreenchange', updateFullscreenBtn);
+        document.addEventListener('fullscreenchange', () => {
+            updateFullscreenBtn();
+            setTimeout(resizeCanvas, 200);
+        });
+        document.addEventListener('webkitfullscreenchange', () => {
+            updateFullscreenBtn();
+            setTimeout(resizeCanvas, 200);
+        });
+        
+        // Handle orientation change
+        window.addEventListener('orientationchange', () => {
+            setTimeout(resizeCanvas, 300);
+        });
         
         function updateFullscreenBtn() {
             const btn = document.getElementById('fullscreenBtn');
