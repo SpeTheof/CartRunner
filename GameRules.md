@@ -1,4 +1,4 @@
-# Cart Runner - Game Rules & Design Document v1.8
+# Cart Runner - Game Rules & Design Document v1.9
 
 ## Overview
 A 2D browser game where a stick figure hero builds speed by mashing a button, rides a shopping cart, and attempts to jump as far as possible off a ramp. Features upgrade shop, profile save system, and multiple game phases.

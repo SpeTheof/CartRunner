@@ -134,18 +134,16 @@ Before making changes, always read:
 - Camera smoothing: 0.15
 
 ### Current Version
-v1.8 - "Camera Fix & Zoom Out" (GitHub Pages only)
+v1.9 - "Smooth Camera Zoom" (GitHub Pages only)
 
-### Recent Changes from v1.7 to v1.8
-- Fixed camera initialization - player now starts centered (20% from left) instead of bottom-right
-- Fixed render transform - zoom only applies during flight, not globally
-- Fixed background rendering - ground/grass/dirt now accounts for camera.scale to fill screen properly
-- Adjusted zoom multiplier: min scale 0.02, zoom ramp 1500 (more zoom at high altitude)
-- Changed camera init from hero.x - canvas.width to hero.x - (canvas.width * 0.2)
-- Added camera.scale = 1 to init
-- Fixed camera targetY during flight to center cart vertically
-- Added ground clamp: camera.y = Math.min(camera.y, 0)
-- Updated version to v1.8 in all locations
+### Recent Changes from v1.8 to v1.9
+- Replaced hard-threshold zoom with smooth linear zoom
+- No more instant zoom at 50m threshold - zoom is proportional to altitude
+- Reduced max zoom: at 200m height = scale 0.5 (was 0.08)
+- Much slower transition: 0.02 smoothing factor
+- Zoom only applies during FLYING phase, not JUMPING
+- Smooth zoom out when descending (no snap back)
+- Updated version to v1.9
 
 ### Files to Update on Version Change
 - CartRunner.html (title tag)

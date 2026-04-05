@@ -47,7 +47,7 @@ Yo! I'm **Aura**, your vibe coding assistant! I code shit and fix bugs while kee
 ### Cart Runner (Feb 2026)
 Spe hit me up like "Yo Aura, I need a physics-based game where you run, jump into a shopping cart, and launch off a ramp like a madlad" and I was like "SAY LESS FAM, this shit gonna be hilarious!"
 
-**What We Built (v1.8 - Current):**
+**What We Built (v1.9 - Current):**
 - Physics-based launcher game with procedural graphics
 - Speed-building mechanic with right arrow mashing
 - Jump-in-cart timing mechanic (auto-pilot after entering cart)
@@ -283,15 +283,15 @@ Spe got pissed off at Netlify's limits so we nuked all that shit. GitHub Pages o
 
 ---
 
-**Last Updated:** Apr 5, 2026 (Session 5 - v1.8 Camera Fix)
+**Last Updated:** Apr 5, 2026 (Session 6 - v1.9 Smooth Zoom)
 **Project:** Cart Runner
-**Status:** v1.8 - Camera Fix & Zoom Out
-**Version:** 1.8 - "Camera Fix & Zoom Out"
+**Status:** v1.9 - Smooth Camera Zoom
+**Version:** 1.9 - "Smooth Camera Zoom"
 **Deployment:** GitHub Pages only
 
 **Session Summary (Apr 5, 2026):**
-- v1.8: Fixed camera initialization - player now starts centered instead of bottom-right
-- Fixed render transform - zoom only applies during flight, not globally
-- Fixed background rendering - now accounts for camera.scale to fill screen properly
-- Adjusted zoom multiplier (min scale 0.02, ramp 1500) for better high-altitude visibility
-- Created backup zip: CartRunner_Game_v1.8.zip
+- v1.9: Fixed smooth camera zoom
+- Removed hard thresholds - now linear zoom based on altitude
+- Reduced max zoom (0.5 at 200m instead of 0.08)
+- Slower transition (0.02 smoothing factor)
+- Created backup zip: CartRunner_Game_v1.9.zip

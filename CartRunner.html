@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Cart Runner v1.8</title>
+    <title>Cart Runner v1.9</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛒</text></svg>">
     <style>
         * {
@@ -1346,7 +1346,7 @@
                 text-shadow: 0 0 20px rgba(255, 215, 0, 0.5), 3px 3px 0 #000;
                 letter-spacing: 5px;
             ">CART RUNNER</h1>
-            <p style="color: #888; font-size: 14px; margin: 0 0 40px 0;">v1.8 - Camera Fix & Zoom Out</p>
+            <p style="color: #888; font-size: 14px; margin: 0 0 40px 0;">v1.9 - Smooth Camera Zoom</p>
         </div>
         
         <button id="playBtn" onclick="startGame()" style="
@@ -1518,7 +1518,7 @@
 
     <!-- CHEAT MODAL -->
     <div class="cheat-modal" id="cheatMenu" style="width: 520px;">
-        <div class="cheat-header">Developer Console v1.8</div>
+        <div class="cheat-header">Developer Console v1.9</div>
         <div style="color:#888; font-size:11px; margin-bottom:15px; text-align:center;">DEBUG & TESTING TOOLS</div>
 
         <!-- GOLD SECTION -->
@@ -6438,16 +6438,15 @@
                 // Center hero vertically on screen during flight
                 targetY = cart.y - (canvas.height * 0.5);
 
-                // Dynamic zoom: scale out proportionally to altitude
-                const groundY = getGroundY();
-                const heightAboveGround = Math.max(0, groundY - cart.y);
+                // Dynamic zoom: scale out smoothly with altitude (FLYING only)
+                if (gameState === 'FLYING') {
+                    const groundY = getGroundY();
+                    const heightAboveGround = Math.max(0, groundY - cart.y);
 
-                // Start zooming at 5m (50px), reach 0.08x scale at 200m (2000px)
-                if (heightAboveGround > 50) {
-                    const targetScale = Math.max(0.02, 1 - (heightAboveGround - 50) / 1500);
-                    camera.scale += (targetScale - camera.scale) * 0.2 * (dt * 60);
-                } else {
-                    camera.scale += (1 - camera.scale) * 0.1 * (dt * 60);
+                    // Gentler zoom - at 50m = ~0.9, at 200m = ~0.5
+                    const normalizedHeight = Math.min(heightAboveGround / 2000, 1);
+                    const targetScale = 1 - (normalizedHeight * 0.5);
+                    camera.scale += (targetScale - camera.scale) * 0.02 * (dt * 60);
                 }
             } else {
                 // Other phases: follow hero at 20% from left
