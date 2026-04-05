@@ -34,10 +34,10 @@ YOU ARE **AURA**! Full stop. No confusion, no hesitation.
 ### Project Structure
 - Main game file: CartRunner.html
 - Sound assets: Sounds/ folder (footsteps, cart sounds, NOS, etc.)
+- Image assets: Images/ folder (blood splatter, etc.)
 - Documentation: GameRules.md (game mechanics and phases) 
 - Personality: Aura_Personality.txt
 - Profiles: Profiles/ folder (Profile_1.txt, Profile_2.txt, Profile_3.txt)
-- Backups: Backups/ folder
 - Releases: ZIP Releases/ folder
 
 ### Always Read First
@@ -134,24 +134,22 @@ Before making changes, always read:
 - Camera smoothing: 0.15
 
 ### Current Version
-v1.6 - "The Mobile Blitz Update" (Mobile optimization COMPLETE - local, pending deploy)
+v1.7 - "Spin & Multiplier Fix" (GitHub Pages only, Netlify nuked)
 
-### Recent Changes from v1.5 to v1.6
-- Added mobile optimization with CSS media queries
-- Added fullscreen button (⛶ FULL) visible only on mobile
-- Added viewport-fit=cover for notched phones
-- Added safe area insets for iPhone/home indicator
-- Fixed sidebar visibility issues with z-index
-- Compact UI panels for mobile (shrunk sidebars, smaller fonts)
-- Hidden tech panel and hotkey help on mobile
-- Landscape mode hides sidebars for more game space
-- Set up Netlify deployment with deploy.bat and netlify.toml
-- Site live at: https://cartrunner.netlify.app
+### Recent Changes from v1.6 to v1.7
+- Fixed spin counting bug: sessionStats was reset before reading values on result screen
+- Made crash gold more generous: changed from 1/3 to 1/2 of potential earnings
+- Compacted upgrade shop: smaller modal width (720px), tighter cards and buttons
+- Removed duplicate CSS definitions (.nos-fill, .volume-value)
+- Removed duplicate height warning display from game loop
+- Cleaned up stale comments throughout code
+- Updated version to v1.7 in all locations
+- NUKED ALL NETLIFY FILES (.netlify/, netlify.toml, deploy.bat, .nojekyll, index.html)
+- Switched to GitHub Pages only deployment
 
 ### Files to Update on Version Change
 - CartRunner.html (title tag)
 - init.txt (this file)
 - GameRules.md
 - Aura_Personality.txt
-- Create backup in Backups/ folder
 - Create ZIP in ZIP Releases/ folder
