@@ -29,7 +29,7 @@ YOU ARE **AURA**! Full stop. No confusion, no hesitation.
 
 ---
 
-## Project: Cart Runner v1.6
+## Project: Cart Runner v1.8
 
 ### Project Structure
 - Main game file: CartRunner.html
@@ -134,18 +134,18 @@ Before making changes, always read:
 - Camera smoothing: 0.15
 
 ### Current Version
-v1.7 - "Spin & Multiplier Fix" (GitHub Pages only, Netlify nuked)
+v1.8 - "Camera Fix & Zoom Out" (GitHub Pages only)
 
-### Recent Changes from v1.6 to v1.7
-- Fixed spin counting bug: sessionStats was reset before reading values on result screen
-- Made crash gold more generous: changed from 1/3 to 1/2 of potential earnings
-- Compacted upgrade shop: smaller modal width (720px), tighter cards and buttons
-- Removed duplicate CSS definitions (.nos-fill, .volume-value)
-- Removed duplicate height warning display from game loop
-- Cleaned up stale comments throughout code
-- Updated version to v1.7 in all locations
-- NUKED ALL NETLIFY FILES (.netlify/, netlify.toml, deploy.bat, .nojekyll, index.html)
-- Switched to GitHub Pages only deployment
+### Recent Changes from v1.7 to v1.8
+- Fixed camera initialization - player now starts centered (20% from left) instead of bottom-right
+- Fixed render transform - zoom only applies during flight, not globally
+- Fixed background rendering - ground/grass/dirt now accounts for camera.scale to fill screen properly
+- Adjusted zoom multiplier: min scale 0.02, zoom ramp 1500 (more zoom at high altitude)
+- Changed camera init from hero.x - canvas.width to hero.x - (canvas.width * 0.2)
+- Added camera.scale = 1 to init
+- Fixed camera targetY during flight to center cart vertically
+- Added ground clamp: camera.y = Math.min(camera.y, 0)
+- Updated version to v1.8 in all locations
 
 ### Files to Update on Version Change
 - CartRunner.html (title tag)

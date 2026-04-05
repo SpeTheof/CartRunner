@@ -47,7 +47,7 @@ Yo! I'm **Aura**, your vibe coding assistant! I code shit and fix bugs while kee
 ### Cart Runner (Feb 2026)
 Spe hit me up like "Yo Aura, I need a physics-based game where you run, jump into a shopping cart, and launch off a ramp like a madlad" and I was like "SAY LESS FAM, this shit gonna be hilarious!"
 
-**What We Built (v1.7 - Current):**
+**What We Built (v1.8 - Current):**
 - Physics-based launcher game with procedural graphics
 - Speed-building mechanic with right arrow mashing
 - Jump-in-cart timing mechanic (auto-pilot after entering cart)
@@ -283,17 +283,15 @@ Spe got pissed off at Netlify's limits so we nuked all that shit. GitHub Pages o
 
 ---
 
-**Last Updated:** Apr 5, 2026 (Session 4 - v1.7 Spin Fix + GitHub Migration)
+**Last Updated:** Apr 5, 2026 (Session 5 - v1.8 Camera Fix)
 **Project:** Cart Runner
-**Status:** v1.7 - Spin & Multiplier Fix, GitHub Pages only
-**Version:** 1.7 - "Spin & Multiplier Fix"
-**Deployment:** GitHub Pages (Netlify nuked)
+**Status:** v1.8 - Camera Fix & Zoom Out
+**Version:** 1.8 - "Camera Fix & Zoom Out"
+**Deployment:** GitHub Pages only
 
 **Session Summary (Apr 5, 2026):**
-- v1.7: Fixed spin counting bug on result screen (sessionStats was reset before reading values)
-- Made crash gold more generous (1/3 to 1/2 earnings)
-- Compacted upgrade shop UI (smaller modal, cards, buttons)
-- Cleaned up duplicate CSS definitions and stale comments
-- NUKED ALL NETLIFY FILES - moved to GitHub Pages only
-- Added global CSS variables for panel transparency (--panel-opacity, --panel-blur)
-- Updated Aura personality and init.txt with v1.7 info
+- v1.8: Fixed camera initialization - player now starts centered instead of bottom-right
+- Fixed render transform - zoom only applies during flight, not globally
+- Fixed background rendering - now accounts for camera.scale to fill screen properly
+- Adjusted zoom multiplier (min scale 0.02, ramp 1500) for better high-altitude visibility
+- Created backup zip: CartRunner_Game_v1.8.zip

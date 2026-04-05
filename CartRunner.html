@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Cart Runner v1.7</title>
+    <title>Cart Runner v1.8</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛒</text></svg>">
     <style>
         * {
@@ -1346,7 +1346,7 @@
                 text-shadow: 0 0 20px rgba(255, 215, 0, 0.5), 3px 3px 0 #000;
                 letter-spacing: 5px;
             ">CART RUNNER</h1>
-            <p style="color: #888; font-size: 14px; margin: 0 0 40px 0;">v1.7 - Spin & Multiplier Fix</p>
+            <p style="color: #888; font-size: 14px; margin: 0 0 40px 0;">v1.8 - Camera Fix & Zoom Out</p>
         </div>
         
         <button id="playBtn" onclick="startGame()" style="
@@ -1510,7 +1510,7 @@
                     style="background:#1a1a2e !important; border:1px solid #00F0FF !important; padding: 0 12px !important; font-size:11px !important; height:26px !important; color:#00F0FF !important; border-radius:10px !important; letter-spacing:0.5px !important;">CHEAT</button>
             </div>
         </div>
-        <div id="gameConsole" class="console-log" style="max-height: 260px; overflow:auto; padding-right:6px;">
+        <div id="gameConsole" class="console-log" style="height: 64px; overflow-y: auto; padding-right:6px;">
             <div class="log-msg info">> System Initialized</div>
             <div class="log-msg">> Ready for launch...</div>
         </div>
@@ -1518,7 +1518,7 @@
 
     <!-- CHEAT MODAL -->
     <div class="cheat-modal" id="cheatMenu" style="width: 520px;">
-        <div class="cheat-header">Developer Console v1.7</div>
+        <div class="cheat-header">Developer Console v1.8</div>
         <div style="color:#888; font-size:11px; margin-bottom:15px; text-align:center;">DEBUG & TESTING TOOLS</div>
 
         <!-- GOLD SECTION -->
@@ -3406,7 +3406,7 @@
         let isTimerRunning = false;
 
         let gameState = 'RUNNING';
-        let camera = { x: 0, y: 0 };
+        let camera = { x: 0, y: 0, scale: 1 };
         let isPaused = false;
         let bestDistance = 0;
         let bestSpins = 0;
@@ -4607,9 +4607,10 @@
             cart.x = getCART_POSITION(); // Cart at 150m+ (scaled with upgrades)
             cart.y = groundY - 35;
 
-            // Camera starts with ramp at 200m appearing at right edge
-            camera.x = hero.x - canvas.width;
+            // Camera starts with hero at 20% from left
+            camera.x = hero.x - (canvas.width * 0.2);
             camera.y = 0;
+            camera.scale = 1;
 
             // Initialize procedural skeleton with proper hierarchy
             hero.torso.angle = 0;
@@ -4873,13 +4874,25 @@
 
             const groundY = getGroundY();
             const camX = camera.x;
-            const drawStart = camX - 100;
-            const drawEnd = camX + canvas.width + 100;
+            const camY = camera.y;
+
+            // Account for zoom: visible world area = canvas / scale
+            const visibleWidth = canvas.width / camera.scale;
+            const visibleHeight = canvas.height / camera.scale;
+
+            // Center of visible area in world space
+            const centerX = camX + canvas.width / 2;
+            const centerY = camY + canvas.height / 2;
+
+            const drawStart = centerX - visibleWidth / 2 - 200;
+            const drawEnd = centerX + visibleWidth / 2 + 200;
+            const drawTop = centerY - visibleHeight / 2 - 200;
+            const drawBottom = centerY + visibleHeight / 2 + 500;
             const totalWidth = drawEnd - drawStart;
 
             // Dirt - Infinite
             ctx.fillStyle = '#8B4513';
-            ctx.fillRect(drawStart, groundY, totalWidth, canvas.height - groundY + 500); // Deep dirt
+            ctx.fillRect(drawStart, groundY, totalWidth, drawBottom - groundY);
 
             // Grass - Top layer
             ctx.fillStyle = '#228B22';
@@ -4995,8 +5008,12 @@
             const rampX = getRAMP_START_X();
             const rampEndX = getRAMP_START_X() + RAMP_LENGTH;
 
-            // Optimization: Only draw if visible
-            if (rampEndX < camera.x - 100 || rampX > camera.x + canvas.width + 100) return;
+            // Optimization: Only draw if visible (account for zoom)
+            const visibleWidth = canvas.width / camera.scale;
+            const centerX = camera.x + canvas.width / 2;
+            const viewLeft = centerX - visibleWidth / 2 - 200;
+            const viewRight = centerX + visibleWidth / 2 + 200;
+            if (rampEndX < viewLeft || rampX > viewRight) return;
 
             // Ramp surface
             ctx.fillStyle = '#707070';
@@ -6384,6 +6401,9 @@
                         updateStatsDisplay();
                     } else {
                         gameState = 'CRASHED';
+                        crashPosition.x = cart.x;
+                        crashPosition.y = groundY;
+                        crashPosition.active = true;
                         if (maxHeight > bestHeight) bestHeight = maxHeight;
                         stopSweepSound();
                         playCrashSound();
@@ -6408,45 +6428,43 @@
             }
 
             // Camera (follows cart during flight)
-            // Look ahead! Cart should be on the left (approx 20% of screen) so we see what's coming.
             let targetX;
             let targetY = 0;
 
-            // During flying phase, camera follows cart directly for responsive tracking
             if (gameState === 'FLYING' || gameState === 'JUMPING') {
-                // Follow hero (who is offset from cart) to keep hero in view
-                const targetEntityX = hero.x;
-                const targetEntityY = hero.y;
-                
-                targetX = targetEntityX - (canvas.width * 0.25);
+                // Follow cart during flight/jump
+                targetX = cart.x - (canvas.width * 0.25);
                 
                 // Center hero vertically on screen during flight
-                let baseTargetY = targetEntityY - canvas.height * 0.5;
-                
-                targetY = baseTargetY;
+                targetY = cart.y - (canvas.height * 0.5);
+
+                // Dynamic zoom: scale out proportionally to altitude
+                const groundY = getGroundY();
+                const heightAboveGround = Math.max(0, groundY - cart.y);
+
+                // Start zooming at 5m (50px), reach 0.08x scale at 200m (2000px)
+                if (heightAboveGround > 50) {
+                    const targetScale = Math.max(0.02, 1 - (heightAboveGround - 50) / 1500);
+                    camera.scale += (targetScale - camera.scale) * 0.2 * (dt * 60);
+                } else {
+                    camera.scale += (1 - camera.scale) * 0.1 * (dt * 60);
+                }
             } else {
-                // Other phases: follow hero
+                // Other phases: follow hero at 20% from left
                 targetX = hero.x - (canvas.width * 0.2);
+                camera.scale += (1 - camera.scale) * 0.1;
             }
 
-            // Smooth camera follow - much faster during flight for direct tracking
+            // Smooth camera follow
             const camSpeedX = (gameState === 'FLYING' || gameState === 'JUMPING') ? 0.8 : 0.12;
-            // Use very fast Y speed during flight for direct vertical tracking
             const camSpeedY = (gameState === 'FLYING' || gameState === 'JUMPING') ? 0.9 : 0.12;
-            
-            // Debug: Log camera values during flight
-            if (gameState === 'FLYING' && Math.random() < 0.02) {
-                console.log(`Camera Debug - cart.y: ${cart.y.toFixed(1)}, targetY: ${targetY.toFixed(1)}, camera.y: ${camera.y.toFixed(1)}, targetX: ${targetX.toFixed(1)}, camera.x: ${camera.x.toFixed(1)}`);
-            }
-            
+
             camera.x += (targetX - camera.x) * camSpeedX * (dt * 60);
             camera.y += (targetY - camera.y) * camSpeedY * (dt * 60);
 
-            // Hard clamp: don't let camera go below ground (y=0 is ground level)
+            // Hard clamp: don't let camera go below ground
             camera.y = Math.min(camera.y, 0);
-            
-            // During flight, no upper limit - camera can follow to any height
-            // During other phases, cap at -400
+
             if (gameState !== 'FLYING' && gameState !== 'JUMPING') {
                 camera.y = Math.max(camera.y, -400);
             }
@@ -6748,7 +6766,13 @@
 
             // 2. Prepare World Space
             ctx.save();
-            ctx.translate(-camera.x, -camera.y);
+            if (camera.scale !== 1) {
+                ctx.translate(canvas.width / 2, canvas.height / 2);
+                ctx.scale(camera.scale, camera.scale);
+                ctx.translate(-camera.x - canvas.width / 2, -camera.y - canvas.height / 2);
+            } else {
+                ctx.translate(-camera.x, -camera.y);
+            }
 
             // Draw Logo in world space (so we run away from it)
             drawLogo();
@@ -6758,20 +6782,35 @@
             drawRamp();
 
             // Draw blood splatter on crash (above ground/road, below hero)
-            if (crashPosition.active && bloodSplatterImage && bloodSplatterImage.complete) {
+            if (crashPosition.active) {
                 ctx.save();
-                ctx.globalAlpha = 0.8; // Semi-transparent
                 const splatterWidth = 100;
-                const splatterHeight = 60; // Flatter ellipse shape
-                // Draw blood splatter on ground at crash position
-                // Position bottom of splatter at ground level
-                ctx.drawImage(
-                    bloodSplatterImage, 
-                    crashPosition.x - splatterWidth / 2, 
-                    crashPosition.y - splatterHeight + 10, // Bottom aligns with ground
-                    splatterWidth, 
-                    splatterHeight
-                );
+                const splatterHeight = 60;
+                const sx = crashPosition.x - splatterWidth / 2;
+                const sy = crashPosition.y - splatterHeight + 55;
+
+                if (bloodSplatterImage && bloodSplatterImage.complete && bloodSplatterImage.naturalWidth > 0) {
+                    ctx.globalAlpha = 0.8;
+                    ctx.drawImage(bloodSplatterImage, sx, sy, splatterWidth, splatterHeight);
+                } else {
+                    // Fallback: draw procedural blood splatter
+                    ctx.globalAlpha = 0.7;
+                    ctx.fillStyle = '#FF3D71';
+                    ctx.beginPath();
+                    ctx.ellipse(sx + splatterWidth / 2, sy + splatterHeight / 2, splatterWidth / 2, splatterHeight / 2, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Splatter drops
+                    for (let i = 0; i < 8; i++) {
+                        const angle = (Math.PI * 2 / 8) * i;
+                        const dist = 20 + Math.random() * 30;
+                        const dx = sx + splatterWidth / 2 + Math.cos(angle) * dist;
+                        const dy = sy + splatterHeight / 2 + Math.sin(angle) * dist * 0.6;
+                        const r = 2 + Math.random() * 5;
+                        ctx.beginPath();
+                        ctx.arc(dx, dy, r, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
                 ctx.restore();
             }
 
