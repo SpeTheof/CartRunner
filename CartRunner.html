@@ -250,13 +250,12 @@
             transition: all 0.2s;
             font-size: 12px;
             text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         /* Hide fullscreen button on desktop */
         .mobile-only {
             display: none !important;
-        }
-            letter-spacing: 1px;
         }
 
         .top-btn:hover {
@@ -880,12 +879,12 @@
             pointer-events: auto;
         }
 
+        /* Volume sliders wrapper panel */
         .volume-panel {
             position: fixed;
             bottom: 20px;
             left: 460px;
-            right: auto;
-            width: 320px;
+            width: 300px;
             padding: 12px 15px;
             background: rgba(10, 10, 15, var(--panel-opacity));
             backdrop-filter: blur(var(--panel-blur));
@@ -893,18 +892,24 @@
             border-radius: 12px;
             z-index: 1001;
             display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .volume-row {
+            display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
         }
 
         .volume-label {
-            font-size: 11px;
+            font-size: 10px;
             color: #8a8f9d;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             font-weight: 600;
             white-space: nowrap;
-            width: 100px;
+            width: 95px;
             text-align: right;
         }
 
@@ -912,9 +917,48 @@
             font-size: 11px;
             color: #00F0FF;
             font-weight: 700;
-            min-width: 35px;
+            min-width: 40px;
             text-align: left;
             font-family: 'Courier New', monospace;
+        }
+
+        .volume-slider {
+            flex: 1;
+            min-width: 80px;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #FFD700;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            transition: all 0.2s;
+        }
+
+        .volume-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #FFD700;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            border: none;
         }
 
         .console-log {
@@ -1453,17 +1497,17 @@
 
     <!-- CONSOLE PANEL -->
     <div class="ui-panel console-panel" id="bottomLeftConsoleSection"
-        style="position: fixed; left: 20px; bottom: 20px; width: 420px; max-width: 90vw;">
+        style="position: fixed; left: 20px; bottom: 20px; width: 420px; max-width: 90vw; padding-top: 12px !important;">
         <div class="panel-header"
-            style="margin-bottom: 8px; padding-bottom: 5px; display:flex; align-items:center; justify-content:space-between;">
-            <span>SYSTEM LOG</span>
-            <div style="display:flex; gap:4px;">
+            style="margin: 0 !important; padding: 0 !important; display:flex !important; align-items:center !important; justify-content:space-between !important; height: 36px; border-bottom: 2px solid rgba(255, 255, 255, 0.05);">
+            <span style="font-size: 14px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #6d7385; line-height: 1; display: flex; align-items: center; transform: translateY(-5px);">CONSOLE</span>
+            <div style="display:flex; gap:6px; margin-top: -10px;">
                 <button class="top-btn" onclick="copyConsole()"
-                    style="background:#1a1a2e; border:1px solid #00F0FF; padding: 2px 8px; font-size:10px; height:20px; color:#00F0FF;">COPY</button>
+                    style="background:#1a1a2e !important; border:1px solid #00F0FF !important; padding: 0 12px !important; font-size:11px !important; height:26px !important; color:#00F0FF !important; border-radius:10px !important; letter-spacing:0.5px !important;">COPY</button>
                 <button class="top-btn" onclick="clearConsole()"
-                    style="background:#1a1a2e; border:1px solid #00F0FF; padding: 2px 8px; font-size:10px; height:20px; color:#00F0FF;">CLEAR</button>
+                    style="background:#1a1a2e !important; border:1px solid #00F0FF !important; padding: 0 12px !important; font-size:11px !important; height:26px !important; color:#00F0FF !important; border-radius:10px !important; letter-spacing:0.5px !important;">CLEAR</button>
                 <button class="top-btn" onclick="toggleCheatMenu()"
-                    style="background:#1a1a2e; border:1px solid #00F0FF; padding: 2px 8px; font-size:10px; height:20px; color:#00F0FF;">CHEAT</button>
+                    style="background:#1a1a2e !important; border:1px solid #00F0FF !important; padding: 0 12px !important; font-size:11px !important; height:26px !important; color:#00F0FF !important; border-radius:10px !important; letter-spacing:0.5px !important;">CHEAT</button>
             </div>
         </div>
         <div id="gameConsole" class="console-log" style="max-height: 260px; overflow:auto; padding-right:6px;">
@@ -1921,19 +1965,23 @@
         <div id="resultText"></div>
     </div>
 
-    <!-- UI TRANSPARENCY CONTROL -->
-    <div class="volume-panel" id="UITransparencySection"
-        style="position: fixed; left: 460px; right: auto; bottom: 70px; z-index: 1001; display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: rgba(10, 10, 15, var(--panel-opacity)); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;">
-        <span class="volume-label">UI TRANSPARENCY</span>
-        <input type="range" class="volume-slider" id="uiTransparencySlider" min="20" max="100" value="100">
-        <span class="volume-value" id="transparencyValue">85%</span>
-    </div>
-
-    <div class="volume-panel" id="MasterVolumeSection"
-        style="position: fixed; left: 460px; right: auto; bottom: 20px; z-index: 1001; display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: rgba(10, 10, 15, var(--panel-opacity)); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;">
-        <span class="volume-label">MASTER VOLUME</span>
-        <input type="range" class="volume-slider" id="masterVolume" min="0" max="100" value="100">
-        <span class="volume-value" id="volumeValue">100%</span>
+    <!-- VOLUME, BLUR & TRANSPARENCY CONTROLS -->
+    <div class="volume-panel" id="VolumeControls">
+        <div class="volume-row">
+            <span class="volume-label">UI BLUR</span>
+            <input type="range" class="volume-slider" id="uiBlurSlider" min="0" max="20" value="3">
+            <span class="volume-value" id="blurValue">3px</span>
+        </div>
+        <div class="volume-row">
+            <span class="volume-label">UI TRANSPARENCY</span>
+            <input type="range" class="volume-slider" id="uiTransparencySlider" min="0" max="100" value="100">
+            <span class="volume-value" id="transparencyValue">100%</span>
+        </div>
+        <div class="volume-row">
+            <span class="volume-label">MASTER VOLUME</span>
+            <input type="range" class="volume-slider" id="masterVolume" min="0" max="100" value="100">
+            <span class="volume-value" id="volumeValue">100%</span>
+        </div>
     </div>
 
     <div class="ui-panel hotkey-panel" id="bottomRightControlsSection"
@@ -2344,6 +2392,19 @@
                 });
             }
             
+            // UI Blur Slider
+            const blurSlider = document.getElementById('uiBlurSlider');
+            const blurValue = document.getElementById('blurValue');
+            if (blurSlider) {
+                blurSlider.addEventListener('input', function () {
+                    const blur = parseInt(this.value);
+                    if (blurValue) {
+                        blurValue.textContent = blur + 'px';
+                    }
+                    applyUIBlur(blur);
+                });
+            }
+            
             // Ensure profiles exist and load current profile sound settings
             ensureProfilesExist();
             loadProfileSoundSettings(currentSaveSlot);
@@ -2390,6 +2451,11 @@
             if (consolePanel) {
                 consolePanel.style.background = `rgba(10, 10, 15, ${alpha})`;
             }
+        }
+
+        // Apply UI blur to all panels
+        function applyUIBlur(blur) {
+            document.documentElement.style.setProperty('--panel-blur', blur + 'px');
         }
 
         const canvas = document.getElementById('gameCanvas');
